@@ -1,4 +1,14 @@
-#  basic fullstack project structure for starting a new project
+# Introduction
+
+Basic weather-app with additional geo information.
+
+Targets:\
+<input type="checkbox" disabled /> Basic using of ArcGIS API \
+<input type="checkbox" disabled /> Integrate Reverse-Geocoder with Google Geocoder \
+<input type="checkbox" disabled /> Adding building tools \
+<input type="checkbox" disabled /> Adding test automation 
+
+##  basic fullstack project
 
 This project uses [Next.js](https://nextjs.org/) as simple and performant backend with [Prisma](https://www.prisma.io/) as ORM.
 [React](https://reactjs.org/) is being used as Frontend framework with [Tailwind css](https://tailwindcss.com/) for creating fast and clean user interfaces.  
@@ -28,16 +38,6 @@ For automated tests [Cypress](https://docs.cypress.io) is used as end-to-end tes
 Just use <code>npm install</code> and you are ready to go :)
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see your current page.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-Here you can app your project structure.
-
-API documentation is taken from [Next.js](https://nextjs.org/):
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-
 
 ## Author
 
