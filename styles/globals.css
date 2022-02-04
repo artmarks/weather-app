@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://js.arcgis.com/4.21/@arcgis/core/assets/esri/themes/light/main.css');
+
 html,
 body {
   padding: 0;
@@ -18,3 +20,5 @@ a {
 * {
   box-sizing: border-box;
 }
+
+

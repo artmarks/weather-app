@@ -9,14 +9,19 @@
     "cypress": "cypress open"
   },
   "dependencies": {
+    "@arcgis/core": "^4.22.2",
+    "@googlemaps/google-maps-services-js": "^3.3.8",
     "@prisma/client": "^3.8.1",
     "next": "12.0.8",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-icons": "^4.3.1",
+    "swr": "^1.2.1"
   },
   "devDependencies": {
     "@types/node": "^17.0.10",
     "@types/react": "17.0.38",
+    "@types/react-dom": "^17.0.11",
     "autoprefixer": "^10.4.2",
     "cypress": "^9.3.1",
     "eslint": "8.7.0",

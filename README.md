@@ -3,10 +3,10 @@
 Basic weather-app with additional geo information.
 
 Targets:\
-<input type="checkbox" disabled /> Basic using of ArcGIS API \
-<input type="checkbox" disabled /> Integrate Reverse-Geocoder with Google Geocoder \
-<input type="checkbox" disabled /> Adding building tools \
-<input type="checkbox" disabled /> Adding test automation 
+- [ ] Basic using of ArcGIS API \
+- [ ] Integrate Reverse-Geocoder with Google Geocoder \
+- [ ] Adding building tools \
+- [ ] Adding test automation 
 
 ##  basic fullstack project
 
