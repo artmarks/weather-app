@@ -24,6 +24,7 @@ export function Header(){
         <title>{HEADER_NAME}</title>
         <link rel="icon" href="/favicon.ico" />
         <link href="https://js.arcgis.com/4.21/@arcgis/core/assets/esri/themes/light/main.css" rel="stylesheet"></link>
+        <link rel="stylesheet" href="https://js.arcgis.com/4.11/dijit/themes/claro/claro.css"></link>‍
 
       </Head>
     );

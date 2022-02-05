@@ -10,6 +10,9 @@ import Locate from "@arcgis/core/widgets/Locate";
 import { locationToAddress } from "@arcgis/core/rest/locator";
 import { VIEW_MAP } from "./generalConstants";
 import Search from "@arcgis/core/widgets/Search"
+// import Widget from "@arcgis/core/widgets/Widget";
+// import  from "@arcgis/core/widgets/Widget";
+import Feature from "@arcgis/core/widgets/Feature";
 import { PopUpText } from "./pop-up-content";
 
 // esri/geometry/webMercatorUtils
@@ -18,18 +21,19 @@ import { PopUpText } from "./pop-up-content";
 let myLocation = true
 
 let view: MapView = new MapView()
+// let widget = new Widget()
 let locate = new Locate()
 let basemap = "gray-vector"
 let address = ""
+
+let feature = new Feature()
 
 const locatorUrl = "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer";
 // const locatorUrl = "https://maps.googleapis.com/maps/api/geocode";
 
 function EsriMap(props: any) {
   const mapDiv = useRef(null);
-
-  console.log('test',process.env.OPENCAGE_API_KEY)
-
+  // const mapWidget = useRef(null);
 
   useEffect(() => {
     if (mapDiv.current) {
@@ -61,6 +65,37 @@ function EsriMap(props: any) {
 
       view.ui.add(search, "top-right"); //Add to the map
 
+      // if(mapWidget.current){
+      //   widget = new Widget({
+      //     container: mapWidget.current,
+      //     id:'infoWidget',
+      //     label: "Info",
+      //     visible: false,
+      //   })
+      //   view.ui.add(widget,'bottom-right')
+      // }
+      
+      // if(mapWidget.current){
+
+        const graphic = {
+          popupTemplate: {
+            content: "Weather details"
+          }
+        };
+
+        feature = new Feature({
+          // container: mapWidget.current,
+          id:'infoWidget',
+          label: "Info",
+          visible: true,
+          map: view.map,
+          graphic: graphic,
+          spatialReference: view.spatialReference
+        });
+        view.ui.add(feature, "bottom-left");
+      // }
+
+
     const worldCities = new FeatureLayer({
       url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/World_Cities/FeatureServer/"
     });
@@ -80,6 +115,7 @@ function EsriMap(props: any) {
         // Set the popup's title to the coordinates of the location
         title: title,
         location: event.mapPoint, // Set the location of the popup to the clicked location
+
       });
   
       const params = {
@@ -120,17 +156,27 @@ function EsriMap(props: any) {
       }).catch((e)=> console.log(e))      
     
       //weather
-      // fetch('api.openweathermap.org/data/2.5/weather?lat='+lat +'&lon=' + lon + '&appid=',{
-      //   method: 'GET',
-      //   headers: {
-      //     'Accept': 'application/json',
-      //     'Content-Type': 'application/json',
-      //   },
-      // })
-      // .then((res) => res.json())
-      // .then((data) => {
-      //   console.log('testi',data)
-      // })      
+      fetch('api/weather',{
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lat: lat,
+          lng: lon
+       })
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('weather!',data);
+        // widget.graphic.popupTemplate.content = "<div>"+ data.data.main.temp_max + "</div>"
+        // widget.graphic.popupTemplate.content = "Success";
+        setWeatherData(data.data)
+      }).catch((e)=> console.log(e))       
+
+      // const wid = new Widget()
+      // widget.visible = true;
 
     })
 
@@ -148,11 +194,29 @@ function EsriMap(props: any) {
       <div>
           { FillOption(VIEW_MAP)}
       </div>
-      <div className="mapDiv h-[512px] w-[1024px] p-0 ml-10" ref={mapDiv} ></div>
+      <div className="flex flex-row">
+        <div className="mapDiv h-[512px] w-[1024px] p-0 ml-10" ref={mapDiv} >
+           {/* <div id="infoWidget" ref={mapWidget} className="infoWidget flex flex-col bg-slate-50 w-[128px]"> 
+            <p>Hey</p>
+            <p>Test</p>
+            <p>Test</p>
+            <p>Test</p>
+            <p>Test</p>
+          </div>  */}
+        </div>
+      </div>
     </div>
   );
 }
 
+function setWeatherData(data: any){
+  console.log('intern weather',data);
+  console.log('feature',feature);
+  //@ts-ignore
+  feature.graphic.popupTemplate = {content: '<div>' + data.main.temp_max + '</div>'}
+  // feature.graphic.popupTemplate.content = 'test'
+  
+}
 
 //TODO check values
 function setMap(e: React.ChangeEvent<HTMLSelectElement>){  
