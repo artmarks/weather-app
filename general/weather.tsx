@@ -30,7 +30,6 @@ export function WeatherForecast(weatherInfo: Weather){
         return (
             <div className="p-2 flex flex-col my-2 border-2 border-blue-200 rounded-md">
                 <div>Forecast:</div>
-                {/* <div> {weatherInfo.forecast.at(0)?.temperatureDay} </div> */}
                 {weatherInfo.forecast.map((value,key)=> {
                     return(
                         <div key={key}>

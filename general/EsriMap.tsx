@@ -2,235 +2,172 @@ import React, { useRef, useEffect } from "react";
 import ReactDOMServer from 'react-dom/server';
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import ArcGISMap from "@arcgis/core/Map";
-import DictionaryRenderer from "@arcgis/core/renderers/DictionaryRenderer";
 import MapView from "@arcgis/core/views/MapView";
-import webMercatorUtils from "@arcgis/core/widgets/Locate"
 import Locate from "@arcgis/core/widgets/Locate";
 
 import { locationToAddress } from "@arcgis/core/rest/locator";
-import { VIEW_MAP } from "./generalConstants";
+import { ADD_LOCATION_BUTTON_TEXT, GEOCODE_URL, MAP_SELECTION_NAME, REMOVE_LOCATION_BUTTON_TEXT, VIEW_MAP, WORLD_CITIES } from "./generalConstants";
 import Search from "@arcgis/core/widgets/Search"
-// import Widget from "@arcgis/core/widgets/Widget";
-// import  from "@arcgis/core/widgets/Widget";
 import Feature from "@arcgis/core/widgets/Feature";
 import { PopUpText } from "./pop-up-content";
 import { WeatherInformation } from "./weather";
+import { fetchApi, round } from "./general";
 
-// esri/geometry/webMercatorUtils
-// import styles from "../../styles/globals.css";
 
 let myLocation = true
 
 let view: MapView = new MapView()
-// let widget = new Widget()
+let map: ArcGISMap = new ArcGISMap()
 let locate = new Locate()
 let basemap = "gray-vector"
 let address = ""
+let colorStyle = { "--esri-pop-up-color": "azure" } as React.CSSProperties;
+
 
 let feature = new Feature()
 
-const locatorUrl = "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer";
-// const locatorUrl = "https://maps.googleapis.com/maps/api/geocode";
 
 function EsriMap(props: any) {
   const mapDiv = useRef(null);
-  // const mapWidget = useRef(null);
 
   useEffect(() => {
     if (mapDiv.current) {
 
-      const map = new ArcGISMap({
-        basemap: basemap,
+      initMap(map,view,basemap,mapDiv).then((viewElement) => {
 
-      });
+          view = viewElement
+          map = viewElement.map
 
-      view = new MapView({
-        map,
-        container: mapDiv.current,
-        extent: {
-          spatialReference: {
-            wkid: 102100,
-          },
-          xmax: 88920,
-          xmin: 890000,
-          ymax: 6991080,
-          ymin: 6092000,
-        }
-      });
+          setMyLocation()
+          setSearchBar()
+          setFeatureWidget()
+          setFeatureLayer(WORLD_CITIES,0)
+          setAddressPopUp()
+        })  
 
-      setMyLocation()
-
-      const search = new Search({
-        view: view
-      })
-
-      view.ui.add(search, "top-right"); //Add to the map
-
-      // if(mapWidget.current){
-      //   widget = new Widget({
-      //     container: mapWidget.current,
-      //     id:'infoWidget',
-      //     label: "Info",
-      //     visible: false,
-      //   })
-      //   view.ui.add(widget,'bottom-right')
-      // }
       
-      // if(mapWidget.current){
-
-        const graphic = {
-          popupTemplate: {
-            content: "Weather details"
-          }
-        };
-
-        feature = new Feature({
-          // container: mapWidget.current,
-          id:'infoWidget',
-          label: "Info",
-          visible: true,
-          map: view.map,
-          graphic: graphic,
-          spatialReference: view.spatialReference
-        });
-        view.ui.add(feature, "bottom-right");
-      // }
-
-
-    const worldCities = new FeatureLayer({
-      url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/World_Cities/FeatureServer/"
-    });
-    map.add(worldCities, 0);
-
-    view.popup.autoOpenEnabled = false
-
-    view.on("click", function(event) {
-      console.log('Test', event)
-
-      const lat = Math.round(event.mapPoint.latitude * 1000) / 1000;
-      const lon = Math.round(event.mapPoint.longitude * 1000) / 1000;
-  
-      const title = ReactDOMServer.renderToStaticMarkup(<PopUpText lat={lat} lon={lon} />)
-
-      view.popup.open({
-        // Set the popup's title to the coordinates of the location
-        title: title,
-        location: event.mapPoint, // Set the location of the popup to the clicked location
-
-      });
-  
-      const params = {
-        location: event.mapPoint
-      };
-      // const params = {
-      //   latlng: [40.714224,-73.961452],
-      //   key: ""
-      // };
-  
-
-      // Display the popup
-      // Execute a reverse geocode using the clicked location
-      locationToAddress(locatorUrl, params).then((response: any) => {
-          // If an address is successfully found, show it in the popup's content
-          address = response.address
-          view.popup.content = address;
-        }).catch(() => {
-          // If the promise fails and no result is found, show a generic message
-          view.popup.content = "No address was found for this location";
-        });
-
-
-      fetch('api/google-geocoder',{
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          lat: lat,
-          lng: lon
-       })
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('testi',data)
-      }).catch((e)=> console.log(e))      
-    
-      //weather
-      fetch('api/weather',{
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          lat: lat,
-          lng: lon
-       })
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('weather!',data);
-        // widget.graphic.popupTemplate.content = "<div>"+ data.data.main.temp_max + "</div>"
-        // widget.graphic.popupTemplate.content = "Success";
-        setWeatherData(data.data)
-      }).catch((e)=> console.log(e))       
-
-      // const wid = new Widget()
-      // widget.visible = true;
-
-    })
 
     }
   }, [props]);
 
 
-  let style = { "--esri-pop-up-color": "azure" } as React.CSSProperties;
   return (
     
-    <div className="flex flex-col" style={style}>
-      <div className="flex flex-row m-2">
-        <button onClick={(e) => changeButton(e)}>Add "my location"</button>
-      </div>
-      <div>
-          { FillOption(VIEW_MAP)}
+    <div className="flex flex-col  justify-center content-center align-middle" style={colorStyle}>
+      <div className="p-2 flex flex-row w-fit self-center text-center m-2 border-2 rounded-md border-green-300">
+        <button className="px-2 mx-2 border-2 border-green-200 rounded" onClick={(e) => changeButton(e)}>{ADD_LOCATION_BUTTON_TEXT}</button>
+        <div className="px-2 mx-2 ">
+          { FillOption(MAP_SELECTION_NAME, VIEW_MAP)}
+        </div>
       </div>
       <div className="flex flex-row">
-        <div className="mapDiv h-[512px] w-[1024px] p-0 ml-10" ref={mapDiv} >
-           {/* <div id="infoWidget" ref={mapWidget} className="infoWidget flex flex-col bg-slate-50 w-[128px]"> 
-            <p>Hey</p>
-            <p>Test</p>
-            <p>Test</p>
-            <p>Test</p>
-            <p>Test</p>
-          </div>  */}
-        </div>
+        {/* Main map Element */}
+        <div className=" h-[79vh] w-full  p-0" ref={mapDiv} />
       </div>
     </div>
   );
 }
 
+function setAddressPopUp(){
+  view.popup.autoOpenEnabled = false
+  view.on("click", (event) => {
+
+    const lat = round(event.mapPoint.latitude);
+    const lon = round(event.mapPoint.longitude);
+    const content = ReactDOMServer.renderToStaticMarkup(<PopUpText lat={lat} lon={lon} />)
+
+    view.popup.open({
+      title: 'Coordinates / Street information',
+      content: content,
+      location: event.mapPoint, // Set the location of the popup to the clicked location
+
+    });
+
+    const params = {
+      location: event.mapPoint
+    };
+
+    // Execute a reverse geocode using the clicked location
+    locationToAddress(GEOCODE_URL, params).then((response: any) => {
+        address = response.address
+        view.popup.content = address;
+      }).catch(() => {
+        view.popup.content = "No address was found for this location";
+      });
+
+
+    //TODO use data and not just print it
+    //google
+    fetchApi('api/google-geocoder', JSON.stringify({ lat: lat, lng: lon}));
+
+    //weather
+    callWeatherApi(JSON.stringify({ lat: lat, lng: lon}))
+
+  })
+}
+
+function callWeatherApi(parameter: string){
+  fetchApi('api/weather', parameter , setWeatherData);
+}
+
+function setFeatureLayer(url: string, index: number){
+  const layer = new FeatureLayer({
+    url: url
+  });
+  map.add(layer, index);
+}
+
+function setFeatureWidget(){
+  const graphic = {
+    popupTemplate: {
+      content: "Weather details"
+    }
+  };
+
+  feature = new Feature({
+    id:'infoWidget',
+    label: "Info",
+    visible: false,
+    map: view.map,
+    graphic: graphic,
+    spatialReference: view.spatialReference
+  });
+  view.ui.add(feature, "bottom-right");
+}
+
+function setSearchBar(){
+  const search = new Search({
+    view: view
+  })
+
+  search.on('search-complete',(event) =>{
+    const geom = event.results[0].results[0].feature.geometry ;
+    //@ts-ignore
+    callWeatherApi(JSON.stringify({ lat: geom.latitude, lng: geom.longitude}))
+  })
+
+  view.ui.add(search, "top-right"); //Add to the map
+}
+
 function setWeatherData(data: any){
-  console.log('intern weather',data);
-  console.log('feature',feature);
-  //@ts-ignore
-  // feature.graphic.popupTemplate = {content: '<div>' + data.main.temp_max + '</div>'}
   const content = ReactDOMServer.renderToStaticMarkup(<WeatherInformation data={data} />)
   //@ts-ignore
   feature.graphic.popupTemplate = {content: content}
-  
+  feature.visible = true
 }
 
 //TODO check values
-function setMap(e: React.ChangeEvent<HTMLSelectElement>){  
-  view.map.set('basemap',e.target.value) 
+function setMap(e: React.ChangeEvent<HTMLSelectElement>){
+  if(view.map){
+    view.map.set('basemap',e.target.value) 
+  }
 }
 
-function FillOption(option: Array<string>){
+function FillOption(name: string, option: Array<string>){
   return (
     <div>
-      <p>Selection</p>
-      <select onChange={(e)=> setMap(e)}>
+      <label htmlFor="mapSelection" >{name}</label>
+      <select className="ml-2 px-2 border-2 border-green-200 rounded" id="mapSelection" onChange={(e)=> setMap(e)}>
         { option.map((value, key)=> {
             return <option key={key} value={value}>{value}</option>
           }) 
@@ -241,33 +178,65 @@ function FillOption(option: Array<string>){
 }
 
 function setMyLocation(){
-  if(myLocation){
     locate = new Locate({
       view: view,
       useHeadingEnabled: false,
-      goToOverride: function(view, options) {
-        options.target.scale = 1;
-        return view.goTo(options.target);
-      },
+      visible: myLocation
     });
+    locate.on('locate',(event)=>{
+      callWeatherApi(JSON.stringify({ lat: event.position.coords.longitude, lng: event.position.coords.longitude}))
+    })
     view.ui.add(locate, "bottom-left");
-  }else{
-    view.ui.remove(locate)
-  }
-  
 }
 
+function updateMyLocation(){
+  myLocation ? locate.visible = true
+    : locate.visible = false
+}
 
 function changeButton(e: React.FormEvent<HTMLButtonElement>){
   const but = e.target as HTMLButtonElement;
 
   myLocation = !myLocation
-  setMyLocation()
+  updateMyLocation()
   if( myLocation ){
-    but.innerText = "add \"My Location\"";
+    but.innerText = ADD_LOCATION_BUTTON_TEXT;
   }else{
-    but.innerText = "remove \"My Location\"";
+    but.innerText = REMOVE_LOCATION_BUTTON_TEXT;
   }
+}
+
+async function initMap(map: ArcGISMap, view: MapView, basemap: string, mapDiv: any): Promise<MapView>{
+    map = new ArcGISMap({
+        basemap: basemap,
+      });
+
+    //TODO into constants
+    view = new MapView({
+      map,
+      container: mapDiv.current,
+      extent: {
+        spatialReference: {
+          wkid: 102100,
+        },
+        xmax: 88920,
+        xmin: 890000,
+        ymax: 6991080,
+        ymin: 6092000,
+      }
+    });
+    return new Promise((resolve) => {
+        waitFor(view.map,()=>{resolve(view)})
+    });
+}
+
+function waitFor(variable: any, callback: Function, wait: number = 50) {
+  var interval = setInterval(function() {
+    if (variable) {
+      clearInterval(interval);
+      callback();
+    }
+  }, wait);
 }
 
 export default EsriMap;

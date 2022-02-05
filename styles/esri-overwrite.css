@@ -16,3 +16,7 @@
 .esri-search-result-renderer{
     background-color: var(--esri-pop-up-color);
 }
+
+.esri-popup__header-container--button:hover{
+    background-color: var(--esri-pop-up-color);
+}

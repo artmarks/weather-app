@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { Footer, Header } from "../general/general";
 import styles from "../styles/Home.module.css";
 
@@ -13,31 +13,30 @@ const EsriMapWithNoSSR = dynamic(() => import("../general/EsriMap"), {
 
 function Home() {
 
-  const [counter, setCount] = useState(0);
+  
+  const [size, setSize] = useState([0, 0]);
 
+  //rerender example if window size changes 
+  // useLayoutEffect(() => {
+  //   function updateSize() {
+  //     setSize([window.innerWidth, window.innerHeight]);
+  //   }
+  //   window.addEventListener('resize', updateSize);
+  //   updateSize();
+  //   return () => window.removeEventListener('resize', updateSize);
+  // }, []);
      
 
   return (
     <div className={styles.container}>
       <Header/>
 
-      <h1 className={styles.title}>
+      <div className="text-center text-2xl">
         Weather App
-      </h1>
-
-      <div className="my-4">
-        <button onClick={()=>setCount }>Count</button>
       </div>
 
-      <div className="my-4">
-        <p>Content: {counter}</p>
-      <button onClick={() => setCount(0)}>Reset</button>
-      <button onClick={() => setCount(prevCount => prevCount - 1)}>-</button>
-      <button onClick={() => setCount(prevCount => prevCount + 1)}>+</button>
-      </div>
-
-      <div className="my-4">
-        <EsriMapWithNoSSR content={"NR.:" + counter} />
+      <div className="mb-4">
+        <EsriMapWithNoSSR width={size}/>
       </div> 
 
       <Footer/>

@@ -12,22 +12,13 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
 
-    let dataParam = null;
-    console.log('testi weather')
+    const fetchUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat='
+    + req.body.lat +
+    '&lon=' + req.body.lng +
+    '&lang=' + 'de' +
+    '&units=metric&appid=' + process.env.OPENWEATHER_API_KEY;
 
-    // const text = 'http://api.openweathermap.org/data/2.5/weather?lat=' +
-    //  req.body.lat +
-    // '&lon=' + req.body.lng +
-    // '&lang=' + 'de' +
-    // '&units=metric&appid=' + process.env.OPENWEATHER_API_KEY;
-    // console.log('mmh', text)
-
-    // fetch('http://api.openweathermap.org/data/2.5/weather?lat='
-    fetch('https://api.openweathermap.org/data/2.5/onecall?lat='
-      + req.body.lat +
-      '&lon=' + req.body.lng +
-      '&lang=' + 'de' +
-      '&units=metric&appid=' + process.env.OPENWEATHER_API_KEY ,{
+    fetch( fetchUrl ,{
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -36,12 +27,10 @@ export default async function handler(
       })
       .then((res) => res.json()  )
       .then((data) => {
-        console.log('testiWeather',data)
-        // dataParam = data
       res.status(200).json({ success: true, data: data })
-
-      })     
-      // res.status(200).json({ success: true, data: ['test',dataParam] })
+      }).catch((e) => {
+        res.status(500).json({ success: false, data: e.response.data.error_message })
+      });     
      
 }
 

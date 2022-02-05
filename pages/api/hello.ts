@@ -13,10 +13,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const allUsers = await prisma.user.findMany()
-  console.log(allUsers)
-  let testValue = allUsers.at(0)?.mail;
-  res.status(200).json({ name: 'John Doe2', test: testValue })
+  
+  res.status(200).json({ name: 'test', test: 'test' })
 
 }
 
