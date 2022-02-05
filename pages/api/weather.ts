@@ -6,6 +6,7 @@ type Data = {
     data: any
 }
 
+//TODO de as env.Variable
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
@@ -21,7 +22,8 @@ export default async function handler(
     // '&units=metric&appid=' + process.env.OPENWEATHER_API_KEY;
     // console.log('mmh', text)
 
-    fetch('http://api.openweathermap.org/data/2.5/weather?lat='
+    // fetch('http://api.openweathermap.org/data/2.5/weather?lat='
+    fetch('https://api.openweathermap.org/data/2.5/onecall?lat='
       + req.body.lat +
       '&lon=' + req.body.lng +
       '&lang=' + 'de' +

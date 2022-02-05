@@ -1,6 +1,5 @@
-import { count } from "console";
 import dynamic from "next/dynamic";
-import { useRef,useEffect, useState } from "react";
+import { useState } from "react";
 import { Footer, Header } from "../general/general";
 import styles from "../styles/Home.module.css";
 
@@ -23,7 +22,7 @@ function Home() {
       <Header/>
 
       <h1 className={styles.title}>
-        Welcome to Weather App
+        Weather App
       </h1>
 
       <div className="my-4">

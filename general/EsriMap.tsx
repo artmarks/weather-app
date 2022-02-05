@@ -14,6 +14,7 @@ import Search from "@arcgis/core/widgets/Search"
 // import  from "@arcgis/core/widgets/Widget";
 import Feature from "@arcgis/core/widgets/Feature";
 import { PopUpText } from "./pop-up-content";
+import { WeatherInformation } from "./weather";
 
 // esri/geometry/webMercatorUtils
 // import styles from "../../styles/globals.css";
@@ -92,7 +93,7 @@ function EsriMap(props: any) {
           graphic: graphic,
           spatialReference: view.spatialReference
         });
-        view.ui.add(feature, "bottom-left");
+        view.ui.add(feature, "bottom-right");
       // }
 
 
@@ -213,8 +214,10 @@ function setWeatherData(data: any){
   console.log('intern weather',data);
   console.log('feature',feature);
   //@ts-ignore
-  feature.graphic.popupTemplate = {content: '<div>' + data.main.temp_max + '</div>'}
-  // feature.graphic.popupTemplate.content = 'test'
+  // feature.graphic.popupTemplate = {content: '<div>' + data.main.temp_max + '</div>'}
+  const content = ReactDOMServer.renderToStaticMarkup(<WeatherInformation data={data} />)
+  //@ts-ignore
+  feature.graphic.popupTemplate = {content: content}
   
 }
 
@@ -247,7 +250,7 @@ function setMyLocation(){
         return view.goTo(options.target);
       },
     });
-    view.ui.add(locate, "bottom-right");
+    view.ui.add(locate, "bottom-left");
   }else{
     view.ui.remove(locate)
   }

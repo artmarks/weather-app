@@ -1,6 +1,6 @@
-import { COORDINATES } from "./generalConstants";
+import { Coordinates } from "./generalConstants";
 
-export function PopUpText(props: COORDINATES): JSX.Element{
+export function PopUpText(props: Coordinates): JSX.Element{
     return (
       <div className="flex flex-col">
         <p>WGS84 Coordinates:</p>
