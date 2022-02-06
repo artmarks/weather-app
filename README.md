@@ -1,12 +1,8 @@
 # Introduction
 
-Basic weather-app with additional geo information.
+Basic weather-app with additional geo map support by [ESRI API](https://www.esri.com/). 
+Additional information are included by [OpenWeather](https://openweathermap.org/) and [Google Maps Platform](https://developers.google.com/maps) 
 
-Targets:\
-- [ ] Basic using of ArcGIS API \
-- [ ] Integrate Reverse-Geocoder with Google Geocoder \
-- [ ] Adding building tools \
-- [ ] Adding test automation 
 
 ##  basic fullstack project
 
@@ -14,30 +10,30 @@ This project uses [Next.js](https://nextjs.org/) as simple and performant backen
 [React](https://reactjs.org/) is being used as Frontend framework with [Tailwind css](https://tailwindcss.com/) for creating fast and clean user interfaces.  
 For automated tests [Cypress](https://docs.cypress.io) is used as end-to-end test framework.  
 
-## Create the structure on your own
+## Screenshots
 
-* Install Node JS 
-    * Install [Next.js](https://nextjs.org/docs/getting-started) 
-    * run dev server <code>npm run dev</code> 
-    * Open http://localhost:3000
-* Create a database you prefer.
-* Install [Prisma](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-mysql)
-    * Create Prisma directory in your project <code>npx prisma init</code>
-    * install Prisma client<code>npm install @prisma/client</code>
-        * Use <code>prisma generate</code> to generate entities from your database    
-* Install [Tailwind css](https://tailwindcss.com/docs/guides/nextjs)
-    * Create Tailwind directory in your project <code>npx tailwindcss init -p</code>
-    * Add tailwind directive <code>@tailwind base</code> to <code>global.css</code>
-* Install [Cypress](https://docs.cypress.io/guides/getting-started/writing-your-first-test)
-    * Start <code>npx cypress open</code> for GUI testing
-    * Run <code>npx cypress run</code> in your continuos integration script 
+![image info](./documentation/basicView.png)
 
+![image info](./documentation/additional.png)
 
 ## Getting started
 
 Just use <code>npm install</code> and you are ready to go :)
 
+Edit <code>*_API_KEY</code> - Files in <code>.env</code> or create a <code>.env.local</code> and assure that is set to your <code>.gitignore</code>.  
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see your current page.
+
+
+## Test automation
+
+Run <code>npx cypress open</code> and choose <code>basic-test.spec.js</code>.
+
+See your test running in a real browser :)
+
+## Build project
+
+Run <code>npm run build</code> to start the NextJS Build Process. The build is stored regularly in <code>weather-app/.next</code>
 
 ## Author
 

@@ -31,7 +31,7 @@ function Home() {
     <div className={styles.container}>
       <Header/>
 
-      <div className="text-center text-2xl">
+      <div data-cy="header" className="text-center text-2xl">
         Weather App
       </div>
 

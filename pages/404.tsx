@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Custom404() {
         return (
             <>
@@ -7,7 +9,9 @@ export default function Custom404() {
                     <h1>404 - Page Not Found!</h1>
                 </div>
                 <div className="flex justify-center">
-                    <a href="/">back to index</a>
+                    <Link href="/">
+                        <a>back to index</a>
+                    </Link>
                 </div>
             </div>
             </>
