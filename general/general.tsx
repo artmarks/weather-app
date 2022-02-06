@@ -1,10 +1,8 @@
 import Head from 'next/head';
-
 import {FaGithub} from 'react-icons/fa'
 import { ForecastWeather, HEADER_NAME, Weather } from './generalConstants';
 
-
-export function Footer(){
+export function Footer(): JSX.Element {
     return (
             <footer className="bg-gradient-to-r from-violet-500 to-fuchsia-500 flex items-center justify-center w-full h-[5vh] border-t">
                 <a
@@ -19,7 +17,7 @@ export function Footer(){
         );
 }
 
-export function Header(){
+export function Header(): JSX.Element{
     return ( 
         <Head>
         <title>{HEADER_NAME}</title>
@@ -32,8 +30,7 @@ export function Header(){
 }
 
 export function interpreteWeather(data: any): Weather | null{
-    if(data)
-    {
+    if(data){
         const weatherArray: Array<any> = data.current.weather
         const descriptionArray: Array<string> = []
         weatherArray.forEach((value)=>{
@@ -41,13 +38,19 @@ export function interpreteWeather(data: any): Weather | null{
         })
 
         const forecastArray: Array<any> = data.daily
+        console.log('forecastArray',forecastArray)
         const formattedForecast: Array<ForecastWeather> = []
         forecastArray.forEach((value)=> {
+            let forecastWeatherDescription = ''
+            const forecastWeatherArray: Array<any> = value.weather
+            forecastWeatherArray.map((value)=> {
+                forecastWeatherDescription += value.description
+            })
             formattedForecast.push({
                 temperatureDay: value.temp.day,
                 temperatureMin: value.temp.min,
                 temperatureMax: value.temp.max,
-                description: "",
+                description: forecastWeatherDescription,
                 date: format_time(value.dt)
             })
         })
@@ -61,10 +64,9 @@ export function interpreteWeather(data: any): Weather | null{
         return weather
     }
     return null
-
 }
 
-export function fetchApi(url: string, parameter: string, callback?: Function , callback_error?: Function){
+export function fetchApi(url: string, parameter: string, callback?: Function , callback_error?: Function): void{
     fetch(url,{
         method: 'POST',
         headers: {
@@ -89,12 +91,12 @@ export function format_time(s: number): string {
     return dtFormat.format(new Date(s * 1e3));
 }
 
-//TODO
-export function errorHandler(e: any){
+// TODO extend error handling
+export function errorHandler(e: any): void{
     console.log(e)
 }
 
-export function round(value: number){
+export function round(value: number): number{
     return Math.round(value * 1000) / 1000;
 }
 

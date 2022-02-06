@@ -5,6 +5,9 @@ export function PopUpText(props: Coordinates): JSX.Element{
       <div className="flex flex-col">
         <p>WGS84 Coordinates:</p>
         <p>Lat: {props.lat}, Lon: {props.lon}</p>
+        { props.address &&
+          <p> {props.address} </p>
+        }
       </div>
     );
   }

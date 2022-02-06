@@ -3,6 +3,7 @@ import { Weather } from "./generalConstants"
 
 export function WeatherInformation(data: any): JSX.Element{
     const weatherInfo = interpreteWeather(data.data)
+    console.log(weatherInfo)
     if(weatherInfo){
         return (
             <div className="flex flex-col p-2 max-h-36 max-w-md overflow-y-scroll">
@@ -28,7 +29,7 @@ export function WeatherInformation(data: any): JSX.Element{
 export function WeatherForecast(weatherInfo: Weather){
     if(weatherInfo.forecast.length > 0){
         return (
-            <div className="p-2 flex flex-col my-2 border-2 border-blue-200 rounded-md">
+            <div className="p-2 flex flex-col my-2 space-y-2 border-2 border-blue-200 rounded-md">
                 <div>Forecast:</div>
                 {weatherInfo.forecast.map((value,key)=> {
                     return(

@@ -1,11 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Client, } from "@googlemaps/google-maps-services-js";
-
-type Data = {
-    success: boolean,
-    data: any
-}
+import { Data } from '../../general/generalConstants';
 
 export default async function handler(
   req: NextApiRequest,
